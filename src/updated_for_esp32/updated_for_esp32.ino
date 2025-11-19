@@ -132,10 +132,10 @@ void setup() {
   SPI.begin(PIN_LORA_SCK, PIN_LORA_MISO, PIN_LORA_MOSI, PIN_LORA_CS);
 
 if (LoRa.begin(LORA_FREQUENCY)) {
-  Serial.println("✅ LoRa init successful.");
+  Serial.println(" LoRa init successful.");
   loRaAvailable = true;
 } else {
-  Serial.println("⚠️ LoRa not detected. Continuing without LoRa.");
+  Serial.println(" LoRa not detected. Continuing without LoRa.");
   loRaAvailable = false;
 }
 
@@ -145,7 +145,7 @@ print_wakeup_reason();
 esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
 
 if (reason == ESP_SLEEP_WAKEUP_EXT0) {
-  Serial.println("📡 Sending data in the form of LoRa Packet");
+  Serial.println(" Sending data in the form of LoRa Packet");
   float rainfall = getRainfallMM();
 
   String url = "**************************************************************" + tId +
@@ -164,12 +164,12 @@ if (reason == ESP_SLEEP_WAKEUP_EXT0) {
       LoRa.beginPacket();
       LoRa.print(loraData);
       LoRa.endPacket();
-      Serial.println("✅ LoRa packet sent: " + loraData);
+      Serial.println(" LoRa packet sent: " + loraData);
   } else {
-      Serial.println("ℹ️ LoRa skipped (module not available)");
+      Serial.println(" LoRa skipped (module not available)");
   }
 
-  Serial.println("🌧️/⏰ Sending GSM data...");
+  Serial.println(" Sending GSM data...");
   SerialAt.println("AT+CGNSPWR=1");
   delay(2000);
   SerialAt.println("AT+CGNSSEQ=\"RMC\"");
@@ -178,7 +178,7 @@ if (reason == ESP_SLEEP_WAKEUP_EXT0) {
   sendGSMData(url);
 
 } else {
-  Serial.println("🌧️/⏰ Sending GSM data...");
+  Serial.println(" Sending GSM data...");
   SerialAt.println("AT+CGNSPWR=1");
   delay(2000);
   SerialAt.println("AT+CGNSSEQ=\"RMC\"");
@@ -201,7 +201,7 @@ if (reason == ESP_SLEEP_WAKEUP_EXT0) {
 }
 
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
-  Serial.println("💤 Going to sleep for " + String(TIME_TO_SLEEP) + " sec...");
+  Serial.println("Going to sleep for " + String(TIME_TO_SLEEP) + " sec...");
   delay(1000);
   Serial.flush();
   esp_deep_sleep_start();
@@ -214,14 +214,14 @@ void print_wakeup_reason() {
   esp_sleep_wakeup_cause_t reason = esp_sleep_get_wakeup_cause();
   switch (reason) {
     case ESP_SLEEP_WAKEUP_EXT0:
-      Serial.println("🔔 Wakeup: MPU interrupt");
+      Serial.println("Wakeup: MPU interrupt");
       break;
     case ESP_SLEEP_WAKEUP_EXT1:
-      Serial.println("🌧️ Wakeup: Rain interrupt");
+      Serial.println("Wakeup: Rain interrupt");
       rainWake = true;
       break;
     case ESP_SLEEP_WAKEUP_TIMER:
-      Serial.println("⏰ Wakeup: Timer (scheduled)");
+      Serial.println(" Wakeup: Timer (scheduled)");
       break;
     default:
       Serial.printf("Wakeup cause: %d\n", reason);
@@ -250,21 +250,21 @@ void readGSM() {
 
 void initBH1750() {
   if (!lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE, 0x23)) {
-    Serial.println("❌ BH1750 not found!");
+    Serial.println(" BH1750 not found!");
     while (1);
   }
 }
 
 void initBMP180() {
   if (!bmp.begin()) {
-    Serial.println("❌ BMP180 not found!");
+    Serial.println(" BMP180 not found!");
     while (1);
   }
 }
 
 float readLight() {
   float lux = lightMeter.readLightLevel();
-  Serial.printf("💡 Light: %.2f lx\n", lux);
+  Serial.printf("Light: %.2f lx\n", lux);
   return lux;
 }
 
@@ -278,16 +278,16 @@ float readSoilTemperature() {
   int analogValue = analogRead(SOIL_TEMP_PIN);
   float voltage = analogValue * (3.3 / 4095.0);
   float temperatureC = (voltage / 3.3) * 100.0;
-  Serial.printf("🌱 Soil Temp: %.2f °C\n", temperatureC);
+  Serial.printf(" Soil Temp: %.2f °C\n", temperatureC);
   return temperatureC;
 }
 
 bool initMPU() {
   if (!mpu.begin()) {
-    Serial.println("❌ MPU6050 not found!");
+    Serial.println(" MPU6050 not found!");
     return false;
   }
-  Serial.println("✅ MPU6050 initialized.");
+  Serial.println("MPU6050 initialized.");
   mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
   mpu.setGyroRange(MPU6050_RANGE_500_DEG);
   mpu.setFilterBandwidth(MPU6050_BAND_5_HZ);
@@ -302,14 +302,14 @@ bool initMPU() {
 float readTemp() {
   float t = dht.readTemperature();
   if (isnan(t)) t = 255;
-  Serial.printf("🌡️ Air Temp: %.2f°C\n", t);
+  Serial.printf(" Air Temp: %.2f°C\n", t);
   return t;
 }
 
 float readHumidity() {
   float h = dht.readHumidity();
   if (isnan(h)) h = 255;
-  Serial.printf("💧 Humidity: %.2f%%\n", h);
+  Serial.printf(" Humidity: %.2f%%\n", h);
   return h;
 }
 
